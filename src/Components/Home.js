@@ -25,8 +25,6 @@ class Home extends Component {
 
     EditItem = (item) => {
 
-
-        console.log(item)
         this.setState({
             modal: !this.state.modal,
             tempObject: item
@@ -88,7 +86,8 @@ class Home extends Component {
 
         const toggle = () => {
             this.setState({
-                modal: !this.state.modal
+                modal: !this.state.modal,
+                tempObject: null
             })
         }
 
