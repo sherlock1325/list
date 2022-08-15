@@ -8,6 +8,7 @@ class Home extends Component {
     state = {
         modal: false,
         content: null,
+        tempObject: null
     }
 
     componentDidMount() {
@@ -19,24 +20,24 @@ class Home extends Component {
         const {Delete} = this.props
         Delete(id)
         this.fetchData()
-        console.log(id)
+
     }
 
-    EditItem = () => {
-        this.EditToggle()
-    }
+    EditItem = (item) => {
 
-    EditToggle = (id) => {
-        const {Delete} = this.props
-        Delete(id)
+
+        console.log(item)
         this.setState({
-            modal: !this.state.modal
+            modal: !this.state.modal,
+            tempObject: item
         })
-        this.fetchData()
+
+
     }
+
+
     fetchData = () => {
         const {data} = this.props
-        const {modal} = this.state
         this.setState({
             content: data.length ? data.map((item, index) => (
                 <tbody key={index}>
@@ -58,7 +59,7 @@ class Home extends Component {
                     </td>
 
                     <td>
-                        <button onClick={() => this.EditToggle(item.id)} className="btn btn-warning  mx-1">
+                        <button onClick={() => this.EditItem(item)} className="btn btn-warning  mx-1">
                             edit
                         </button>
                         <button onClick={() => this.DeleteId(item.id)} className="btn btn-danger">
@@ -78,26 +79,6 @@ class Home extends Component {
                         </div>
                     </div>
                 </div>
-
-                <Modal isOpen={modal} toggle={this.EditToggle}>
-                    <ModalHeader toggle={this.EditToggle}>Modal title</ModalHeader>
-                    <AvForm onValidSubmit={this.EditItem}>
-
-                        <ModalBody>
-                            <AvField name="FirstName" label="FirstName" type="text"
-                                     required/>
-                            <AvField name="LastName" label="LastName" type="text" required/>
-                            <AvField name="Age" label="Age" type="number" required/>
-                            <AvField name="Email" label="Email" type="Email" required/>
-                        </ModalBody>
-
-                        <ModalFooter>
-                            <Button onClick={this.EditItem} color="primary"
-                                    type="submit">save</Button>{' '}
-                            <Button color="secondary" onClick={this.EditToggle}>Cancel</Button>
-                        </ModalFooter>
-                    </AvForm>
-                </Modal>
             </div>
 
         })
@@ -111,15 +92,24 @@ class Home extends Component {
             })
         }
 
-        const {data, AddNewItem} = this.props
-        const {modal, content} = this.state
+        const {AddNewItem, editItem} = this.props
+
+        const {modal, content, tempObject} = this.state
 
         const handleValidSubmit = (events, values) => {
-            AddNewItem(values)
-            console.log(data)
+
+            if (tempObject) {
+                values.id = tempObject.id
+                editItem(values)
+            } else {
+                AddNewItem(values)
+
+            }
             toggle()
             this.fetchData()
+
         }
+
 
         return (
             <div className="container mt-5">
@@ -131,14 +121,19 @@ class Home extends Component {
                             <Button color="success" onClick={toggle}>
                                 Add
                             </Button>
+
                             <Modal isOpen={modal} toggle={toggle}>
-                                <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                                <ModalHeader toggle={toggle}> {tempObject ? "Edit Item" : "Add Item"}</ModalHeader>
                                 <AvForm onValidSubmit={handleValidSubmit}>
                                     <ModalBody>
-                                        <AvField name="FirstName" label="FirstName" type="text" required/>
-                                        <AvField name="LastName" label="LastName" type="text" required/>
-                                        <AvField name="Age" label="Age" type="number" required/>
-                                        <AvField name="Email" label="Email" type="Email" required/>
+                                        <AvField name="FirstName" value={tempObject ? tempObject.FirstName : " "}
+                                                 label="FirstName" type="text" required/>
+                                        <AvField name="LastName" value={tempObject ? tempObject.LastName : " "}
+                                                 label="LastName" type="text" required/>
+                                        <AvField name="Age" value={tempObject ? tempObject.Age : " "} label="Age"
+                                                 type="number" required/>
+                                        <AvField name="Email" value={tempObject ? tempObject.Email : " "} label="Email"
+                                                 type="Email" required/>
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button color="primary" type="submit"
@@ -148,6 +143,8 @@ class Home extends Component {
                                 </AvForm>
 
                             </Modal>
+
+
                         </div>
                         <hr/>
                         <Table>

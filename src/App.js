@@ -24,22 +24,29 @@ function App() {
         SetDataList(newArray)
     }
 
+    const AddItem = (item) => {
+        let Array = dataList;
+        Array.push(item)
+        SetDataList(Array)
+
+    }
     const Delete = (id) => {
 
         let ObjectId = dataList.findIndex(obj => obj.id === id)
         dataList.splice(ObjectId, 1)
         SetDataList(dataList)
 
-
     }
 
 
-    const Edit = (id) => {
+    const editItem = (object) => {
+        let ObjectId = dataList.findIndex(obj => obj.id === object.id)
+        dataList[ObjectId].FirstName = object.FirstName
+        dataList[ObjectId].LastName = object.LastName
+        dataList[ObjectId].Age = object.Age
+        dataList[ObjectId].Email = object.Email
 
-        let ObjectId = dataList.findIndex(obj => obj.id === id)
-        dataList.splice(ObjectId, 1)
         SetDataList(dataList)
-
 
     }
 
@@ -50,8 +57,8 @@ function App() {
             <Router>
                 <Switch>
                     <Route exact={true} path="/">
-                        <Home Edit={(id) => Edit(id)} Delete={(id) => Delete(id)} data={dataList}
-                              AddNewItem={(object) => AddNewItem(object)}/>
+                        <Home editItem={(object) => editItem(object)} Delete={(id) => Delete(id)} data={dataList}
+                              AddItem={(item) => AddItem(item)} AddNewItem={(object) => AddNewItem(object)}/>
                     </Route>
                 </Switch>
             </Router>
